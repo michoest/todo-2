@@ -3,13 +3,13 @@
     <q-card style="width: 350px">
       <q-card-section>
         <q-list separator>
-          <q-item v-if="props.account.id == $store.user.defaultAccount" clickable v-ripple @click="onClickUnsetDefault">
+          <q-item v-if="props.account.id == $store.user.defaultAccount" clickable v-ripple @click="onClickSetDefault(false)">
             <q-item-section avatar>
               <q-icon name="person_remove" />
             </q-item-section>
             <q-item-section>Unset default account</q-item-section>
           </q-item>
-          <q-item v-if="props.account.id != $store.user.defaultAccount" clickable v-ripple @click="onClickSetDefault">
+          <q-item v-if="props.account.id != $store.user.defaultAccount" clickable v-ripple @click="onClickSetDefault(true)">
             <q-item-section avatar>
               <q-icon name="person_add" />
             </q-item-section>
@@ -21,18 +21,6 @@
             </q-item-section>
             <q-item-section>Login to {{ props.account.description }}</q-item-section>
           </q-item>
-          <!-- <q-item v-if="props.item.due?.date" clickable v-ripple @click="onClickPostponeItem(props.item)">
-                      <q-item-section avatar>
-                          <q-icon name="trending_flat" />
-                      </q-item-section>
-                      <q-item-section>Postpone...</q-item-section>
-                  </q-item>
-                  <q-item clickable v-ripple @click="onClickDeleteItem(props.item)">
-                      <q-item-section avatar>
-                          <q-icon name="delete" />
-                      </q-item-section>
-                      <q-item-section>Delete item</q-item-section>
-                  </q-item> -->
         </q-list>
       </q-card-section>
     </q-card>
@@ -50,16 +38,11 @@ const props = defineProps({
   account: Object
 });
 
-const emit = defineEmits(['unsetDefault', 'setDefault', 'login']);
+const emit = defineEmits(['setDefault', 'login']);
 
-const onClickUnsetDefault = () => {
+const onClickSetDefault = (set) => {
   show.value = false;
-  emit('unsetDefault');
-};
-
-const onClickSetDefault = () => {
-  show.value = false;
-  emit('setDefault', props.account.id);
+  emit('setDefault', set ? props.account.id : null);
 };
 
 const onClickLogin = () => {

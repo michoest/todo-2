@@ -16,4 +16,8 @@ class APIError extends Error {
   }
 }
 
-module.exports = { asyncWrapper, APIError };
+function sendSSE(res, type, content) {
+    res.write(`event: ${type}\ndata:${JSON.stringify(content)}\n\n`);
+}
+
+module.exports = { asyncWrapper, APIError, sendSSE };

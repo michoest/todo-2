@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { generateToken } = require('../utils/jwtUtils');
+const { asyncWrapper, APIError } = require('../utils/utils');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const { populate, getDbCollections } = require('../db/db');
@@ -76,6 +77,20 @@ router.post('/logout', (req, res) => {
     // JWT doesn't require server-side logout, but you can implement token invalidation if needed
     res.send('Logged out successfully');
 });
+
+router.post('/default', asyncWrapper(async (req, res, next) => {
+    const { Users } = getDbCollections();
+
+    if (req.body.id == null || req.user.accounts.includes(req.body.id)) {
+        req.user.defaultAccount = req.body.id;
+        Users.update(req.user);
+
+        return res.json();
+    }
+    else {
+        throw new APIError('Invalid account!');
+    }
+}));
 
 router.get('/data', async (req, res, next) => {
     const { Users, Accounts, Tasks } = getDbCollections();
